@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import {useNavigate} from "react-router-dom"
 import axios from 'axios';
-import { API_ENDPOINTS } from '../config/api';
+import { API_ENDPOINTS, useMockData } from '../config/api';
+import { MockApiService } from '../services/mockApi';
 // import { BoardFormData } from '../types/board';
 
 function Insert(): JSX.Element {
@@ -38,17 +39,29 @@ function Insert(): JSX.Element {
 
     const onRegister = async (): Promise<void> => {
         try {
+            if (useMockData) {
+                // Mock 데이터 사용
+                await MockApiService.createBoard({
+                    title: title,
+                    author: author,
+                    contents: contents,
+                    count: 0,
+                    registerDate: getCurrentDateTime()
+                });
+            } else {
+                // 실제 API 사용
                 await axios.post(API_ENDPOINTS.BOARD, {
                     title: title,
                     author: author,
                     contents: contents,
                     count: 0,
                     registerDate: getCurrentDateTime()
-                })
-                console.log(`등록되었습니다`);            
-                navigate("/lists");
+                });
+            }
+            console.log(`등록되었습니다`);            
+            navigate("/lists");
         } catch (error) {
-                console.error(error);                        
+            console.error(error);                        
         } 
     }
 

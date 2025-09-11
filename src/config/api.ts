@@ -12,4 +12,14 @@ export const isLocalhost = API_BASE_URL.includes('localhost');
 
 // Mock 데이터 사용 여부 (환경 변수로 제어)
 export const useMockData = process.env.REACT_APP_USE_MOCK === 'true' || 
-  (isProduction && !process.env.REACT_APP_API_URL);
+  process.env.NODE_ENV === 'production';
+
+// 디버깅용 로그
+console.log('API Config Debug:', {
+  NODE_ENV: process.env.NODE_ENV,
+  REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+  REACT_APP_USE_MOCK: process.env.REACT_APP_USE_MOCK,
+  API_BASE_URL,
+  isProduction,
+  useMockData
+});
