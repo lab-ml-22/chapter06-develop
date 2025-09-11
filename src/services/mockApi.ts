@@ -13,6 +13,11 @@ export class MockApiService {
       const aValue = a[sort as keyof Board];
       const bValue = b[sort as keyof Board];
       
+      // undefined 체크
+      if (aValue === undefined || bValue === undefined) {
+        return 0;
+      }
+      
       if (order === 'desc') {
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       } else {
