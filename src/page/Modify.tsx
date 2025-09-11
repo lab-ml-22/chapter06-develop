@@ -2,7 +2,8 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import {useLocation, useNavigate} from "react-router-dom"
 import { Board, BoardFormData } from '../types/board';
-import { API_ENDPOINTS } from '../config/api';
+import { API_ENDPOINTS, useMockData } from '../config/api';
+import { MockApiService } from '../services/mockApi';
 
 function Modify(): JSX.Element {
   let today = new Date()
@@ -49,14 +50,25 @@ function Modify(): JSX.Element {
     
   useEffect(() => { // 화면에 가장 처음 렌더링 할때만 실행하면 된다고 생각해서 빈배열을 넣은 useEffect를 씀
       if(getBoardId) { // getBoardId이게 유효한 경우에만 실행
-        axios.get(API_ENDPOINTS.BOARD_BY_ID(getBoardId))
-          .then(response => {
-              // console.log(`response.data = ${JSON.stringify(response.data)}`);
-              setEachBoard(response.data)
-          })
-          .catch(error => {
-              console.error(error)
-          })
+        if (useMockData) {
+          // Mock 데이터 사용
+          MockApiService.getBoardById(getBoardId)
+            .then(response => {
+                setEachBoard(response.data)
+            })
+            .catch(error => {
+                console.error(error)
+            })
+        } else {
+          // 실제 API 사용
+          axios.get(API_ENDPOINTS.BOARD_BY_ID(getBoardId))
+            .then(response => {
+                setEachBoard(response.data)
+            })
+            .catch(error => {
+                console.error(error)
+            })
+        }
       }
   }, [getBoardId]) // 의존성배열에 id담은 이유는 첨 렌더링할때 한번만 설정되기때문에 일반적으론, 변경되지 않음
 
@@ -106,15 +118,29 @@ function Modify(): JSX.Element {
 // console.log(`getBoardId = ${getBoardId}`);
     
     try {
-      await axios.put(API_ENDPOINTS.BOARD_BY_ID(getBoardId), {
-        id: eachBoard.id,
-        title: title,
-        author: author,
-        contents: contents,
-        count: eachBoard.count,
-        registerDate: eachBoard.registerDate, // 기존 작성일을 유지한다
-        modifyDate: modifyDate // 수정일은 현재일과 똑같이
-      })
+      if (useMockData) {
+        // Mock 데이터 사용
+        await MockApiService.updateBoard(getBoardId, {
+          id: eachBoard.id,
+          title: title,
+          author: author,
+          contents: contents,
+          count: eachBoard.count,
+          registerDate: eachBoard.registerDate,
+          modifyDate: modifyDate
+        });
+      } else {
+        // 실제 API 사용
+        await axios.put(API_ENDPOINTS.BOARD_BY_ID(getBoardId), {
+          id: eachBoard.id,
+          title: title,
+          author: author,
+          contents: contents,
+          count: eachBoard.count,
+          registerDate: eachBoard.registerDate,
+          modifyDate: modifyDate
+        });
+      }
       console.log(`수정되었습니다`);
       navigate(`/view?id=${getBoardId}&page=${qustrNowPage}`, {
         state: {

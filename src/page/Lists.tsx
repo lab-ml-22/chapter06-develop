@@ -93,11 +93,20 @@ console.log(`lastPageMath = ${JSON.stringify(lastPageMath)}`);
         })
         if (choiceBoard) {
             const countIncrement = choiceBoard.count + 1; // 똑같으면 해당 게시글의 카운트 증가
-            // 증가된 카운트를 json-server에 업데이트하려면 통신해야지
-            axios.put(API_ENDPOINTS.BOARD_BY_ID(param), {
-                ...choiceBoard,
-                count: countIncrement
-            })
+            
+            if (useMockData) {
+                // Mock 데이터 사용
+                MockApiService.updateBoard(param, {
+                    ...choiceBoard,
+                    count: countIncrement
+                });
+            } else {
+                // 실제 API 사용
+                axios.put(API_ENDPOINTS.BOARD_BY_ID(param), {
+                    ...choiceBoard,
+                    count: countIncrement
+                });
+            }
 
             navigate(`/view?id=${param}&page=${nowPage}`, {
                 state:{

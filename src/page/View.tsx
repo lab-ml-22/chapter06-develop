@@ -2,7 +2,8 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import {useLocation, useNavigate} from "react-router-dom"
 import { Board } from '../types/board';
-import { API_ENDPOINTS } from '../config/api';
+import { API_ENDPOINTS, useMockData } from '../config/api';
+import { MockApiService } from '../services/mockApi';
 
 function View(): JSX.Element {
     //  해당 글 번호에 해당하는 게시글 갖고오기
@@ -34,16 +35,29 @@ function View(): JSX.Element {
         if(getBoardId) { // getBoardId이게 유효한 경우에만 실행
             setLoading(true) // 데이터를 갖고오기전에(=통신전에) 로딩화면 보여주기
             setTimeout(() => {
-                axios.get(API_ENDPOINTS.BOARD_BY_ID(getBoardId))
-                .then(response => {
-                    // console.log(`response.data = ${JSON.stringify(response.data)}`);
-                    setEachBoard(response.data)
-                    setLoading(false) // 데이터갖고오고 상태변경
-                })
-                .catch(error => {
-                    console.error(error)
-                    setLoading(false) // 데이터갖고오고 상태변경
-                })
+                if (useMockData) {
+                    // Mock 데이터 사용
+                    MockApiService.getBoardById(getBoardId)
+                        .then(response => {
+                            setEachBoard(response.data)
+                            setLoading(false)
+                        })
+                        .catch(error => {
+                            console.error(error)
+                            setLoading(false)
+                        })
+                } else {
+                    // 실제 API 사용
+                    axios.get(API_ENDPOINTS.BOARD_BY_ID(getBoardId))
+                        .then(response => {
+                            setEachBoard(response.data)
+                            setLoading(false)
+                        })
+                        .catch(error => {
+                            console.error(error)
+                            setLoading(false)
+                        })
+                }
             }, 2000) // 2초후에 통신으로 데이터불러오기
         }
     }, [getBoardId]) // 의존성배열에 id담은 이유는 첨 렌더링할때 한번만 설정되기때문에 일반적으론, 변경되지 않음 
@@ -67,12 +81,23 @@ function View(): JSX.Element {
         navigate(`/lists?_page=${qustrNowPage}`)
     }
 
-    const onDelete = (param: string): void =>  {
+    const onDelete = async (param: string): Promise<void> =>  {
         console.log(`삭제하려는 글의 id 즉,param은 = ${param}`);
         alert('해당글이 삭제됩니다')
-        axios.delete(API_ENDPOINTS.BOARD_BY_ID(param))
-        // navigate(`/lists`)
-        navigate(`/lists?_page=${location.state.page}`)
+        
+        try {
+            if (useMockData) {
+                // Mock 데이터 사용
+                await MockApiService.deleteBoard(param);
+            } else {
+                // 실제 API 사용
+                await axios.delete(API_ENDPOINTS.BOARD_BY_ID(param));
+            }
+            navigate(`/lists?_page=${location.state.page}`)
+        } catch (error) {
+            console.error(error);
+            navigate(`/lists?_page=${location.state.page}`)
+        }
     }
 
     return (
