@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import {useLocation, useNavigate} from "react-router-dom"
 import { Board } from '../types/board';
+import { API_ENDPOINTS } from '../config/api';
 
 function View(): JSX.Element {
     //  해당 글 번호에 해당하는 게시글 갖고오기
@@ -33,7 +34,7 @@ function View(): JSX.Element {
         if(getBoardId) { // getBoardId이게 유효한 경우에만 실행
             setLoading(true) // 데이터를 갖고오기전에(=통신전에) 로딩화면 보여주기
             setTimeout(() => {
-                axios.get(`http://localhost:3001/board/${getBoardId}`)
+                axios.get(API_ENDPOINTS.BOARD_BY_ID(getBoardId))
                 .then(response => {
                     // console.log(`response.data = ${JSON.stringify(response.data)}`);
                     setEachBoard(response.data)
@@ -69,7 +70,7 @@ function View(): JSX.Element {
     const onDelete = (param: string): void =>  {
         console.log(`삭제하려는 글의 id 즉,param은 = ${param}`);
         alert('해당글이 삭제됩니다')
-        axios.delete(`http://localhost:3001/board/${param}`)
+        axios.delete(API_ENDPOINTS.BOARD_BY_ID(param))
         // navigate(`/lists`)
         navigate(`/lists?_page=${location.state.page}`)
     }

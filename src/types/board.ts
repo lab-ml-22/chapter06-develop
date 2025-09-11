@@ -20,3 +20,4 @@ export interface BoardUpdateData extends BoardFormData {
   registerDate: string;
   modifyDate?: string;
 }
+

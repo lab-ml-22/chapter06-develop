@@ -129,8 +129,16 @@
       "title": "일요일",
       "author": "기상캐스터",
       "contents": "일요일 날씨는 비교적 온화합니다",
-      "count": 0,
+      "count": 1,
       "registerDate": "2025-01-12 13:07:38"
+    },
+    {
+      "title": "어제보다 조금 더 나은 오늘",
+      "author": "꾸준",
+      "contents": "한걸음만 더 성장하기",
+      "count": 2,
+      "registerDate": "2025-09-09 15:08:21",
+      "id": "kY6rPhw"
     }
   ]
 }

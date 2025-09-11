@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import {useLocation, useNavigate} from "react-router-dom"
 import { Board, BoardFormData } from '../types/board';
+import { API_ENDPOINTS } from '../config/api';
 
 function Modify(): JSX.Element {
   let today = new Date()
@@ -48,7 +49,7 @@ function Modify(): JSX.Element {
     
   useEffect(() => { // 화면에 가장 처음 렌더링 할때만 실행하면 된다고 생각해서 빈배열을 넣은 useEffect를 씀
       if(getBoardId) { // getBoardId이게 유효한 경우에만 실행
-        axios.get(`http://localhost:3001/board/${getBoardId}`)
+        axios.get(API_ENDPOINTS.BOARD_BY_ID(getBoardId))
           .then(response => {
               // console.log(`response.data = ${JSON.stringify(response.data)}`);
               setEachBoard(response.data)
@@ -105,7 +106,7 @@ function Modify(): JSX.Element {
 // console.log(`getBoardId = ${getBoardId}`);
     
     try {
-      await axios.put(`http://localhost:3001/board/${getBoardId}`, {
+      await axios.put(API_ENDPOINTS.BOARD_BY_ID(getBoardId), {
         id: eachBoard.id,
         title: title,
         author: author,

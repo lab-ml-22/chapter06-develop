@@ -3,6 +3,8 @@ import {useNavigate, useLocation} from "react-router-dom"
 import PageNation from './PageNation';
 import axios from 'axios';
 import { Board } from '../types/board';
+import { API_ENDPOINTS, useMockData } from '../config/api';
+import { MockApiService } from '../services/mockApi';
 
 function Lists(): JSX.Element { 
      const [contentsSorting, setContentsSorting] = useState<Board[]>([])
@@ -43,24 +45,36 @@ console.log(`lastPageMath = ${JSON.stringify(lastPageMath)}`);
     // td에 들어갈 데이터 가져오기_useEffect로 의존성배열은 빈배열로 페이지 로드시, 한번만 불러옴
     useEffect(() => {
         navigate(`/lists?_page=${nowPage}`)
-        // axios.get(`https://fallacious-chivalrous-date.glitch.me/board?_page=${nowPage}&_per_page=${pageBoardCount}&_sort=-registerDate`)  // 페이지 넘버링 바뀌면, 통신통해서 주소에 쿼리파라미터(= 형태는 이렇게 '?key=value')주기
-        axios.get(`http://localhost:3001/board?_page=${nowPage}&_limit=${pageBoardCount}&_sort=registerDate&_order=desc`)
-            .then(response => {
-                setContentsSorting(response.data) // response.data안에 data라는 key를 가져옴
-                // setTotalPage(response.data.pages)
-
-                // Link헤더에서 총 페이지수 계산(2025-01-12글리치랑 연동시키려고 페이징처리수정[s])
-                const headerLink = response.headers.link
-// console.log(`headerLink = ${JSON.stringify(headerLink)}`);
-                if(headerLink) {
-                    const totalPage = calculateTotalPages(headerLink)
-                    setTotalPage(totalPage)
-                }
-                // Link헤더에서 총 페이지수 계산(2025-01-12글리치랑 연동시키려고 페이징처리수정[e])
-            })
-            .catch(error => {
-                console.error(error)
-            })
+        
+        if (useMockData) {
+            // Mock 데이터 사용
+            MockApiService.getBoards(nowPage, pageBoardCount, 'registerDate', 'desc')
+                .then(response => {
+                    setContentsSorting(response.data)
+                    const headerLink = response.headers.link
+                    if(headerLink) {
+                        const totalPage = calculateTotalPages(headerLink)
+                        setTotalPage(totalPage)
+                    }
+                })
+                .catch(error => {
+                    console.error(error)
+                })
+        } else {
+            // 실제 API 사용
+            axios.get(`${API_ENDPOINTS.BOARD}?_page=${nowPage}&_limit=${pageBoardCount}&_sort=registerDate&_order=desc`)
+                .then(response => {
+                    setContentsSorting(response.data)
+                    const headerLink = response.headers.link
+                    if(headerLink) {
+                        const totalPage = calculateTotalPages(headerLink)
+                        setTotalPage(totalPage)
+                    }
+                })
+                .catch(error => {
+                    console.error(error)
+                })
+        }
     }, [nowPage, navigate]) // 의존성배열에 페이지넘버를 넣어서 페이지 클릭했을때 페이징의 번호를 쿼리파라미터(?key=value)형태로 주소에 넣어서 해당페이지에 해당하는 글의갯수를 가져온다
  
     //  내가 주소창에 직접 페이징넘버를 입력했을때 해당페이징에서 보여지는 글의 갯수를 가져온다
@@ -80,7 +94,7 @@ console.log(`lastPageMath = ${JSON.stringify(lastPageMath)}`);
         if (choiceBoard) {
             const countIncrement = choiceBoard.count + 1; // 똑같으면 해당 게시글의 카운트 증가
             // 증가된 카운트를 json-server에 업데이트하려면 통신해야지
-            axios.put(`http://localhost:3001/board/${param}`, {
+            axios.put(API_ENDPOINTS.BOARD_BY_ID(param), {
                 ...choiceBoard,
                 count: countIncrement
             })

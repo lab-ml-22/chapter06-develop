@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {useNavigate} from "react-router-dom"
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 // import { BoardFormData } from '../types/board';
 
 function Insert(): JSX.Element {
@@ -37,7 +38,7 @@ function Insert(): JSX.Element {
 
     const onRegister = async (): Promise<void> => {
         try {
-                await axios.post("http://localhost:3001/board", {
+                await axios.post(API_ENDPOINTS.BOARD, {
                     title: title,
                     author: author,
                     contents: contents,
