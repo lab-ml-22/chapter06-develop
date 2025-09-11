@@ -20,5 +20,6 @@ console.log('API Config Debug:', {
   REACT_APP_USE_MOCK: process.env.REACT_APP_USE_MOCK,
   API_BASE_URL,
   isProduction,
-  useMockData
+  useMockData,
+  hostname: typeof window !== 'undefined' ? window.location.hostname : 'server'
 });
