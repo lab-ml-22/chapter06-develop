@@ -34,7 +34,7 @@ function PageNation({nowPage, totalPage, onNumberGroupHandler, onChangePage}: Pa
             }
         }
     }
-
+ 
     const onPrevPage = (): void => {   
         if(nowPage > 1) {
             if(nowPage % pageGroupSize === 0) { // (ex, 현재페이지가'6'일때 '<'을 클릭하면 이전페이징그룹으로 이동해야하니까)
