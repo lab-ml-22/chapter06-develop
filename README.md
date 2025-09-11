@@ -1,4 +1,4 @@
-<img width="1088" height="660" alt="image" src="https://github.com/user-attachments/assets/d4916333-e3da-4315-9bc5-7ca33a39f32a" />
+<img width="1851" height="611" alt="image" src="https://github.com/user-attachments/assets/b61d653a-34e2-497a-b227-fffcd5699051" />
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
@@ -28,6 +28,13 @@
           <li>날것 그대로의 상태관리</li>
           <li>페이지네이션</li>        
           <li>re-rendering이 쓸데없이 일어나지 않도록</li>
+        </ol>
+      </li>
+      <li>
+        <span>2224-09-11(목):참고사항(데이터 저장 방식)</span>
+        <ol>
+          <li>현재는 브라우저 localStorage 사용</li>
+          <li>각 사용자별로 독립적인 데이터</li>
         </ol>
       </li>
     </ul>
