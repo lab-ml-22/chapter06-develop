@@ -3,8 +3,17 @@ import { MOCK_BOARDS } from '../config/mockData';
 
 // Mock API 서비스
 export class MockApiService {
-  private static boards: Board[] = [...MOCK_BOARDS];
-  private static nextId = 4;
+  private static getBoardsFromStorage(): Board[] {
+    const stored = localStorage.getItem('mockBoards');
+    return stored ? JSON.parse(stored) : [...MOCK_BOARDS];
+  }
+
+  private static saveBoardsToStorage(boards: Board[]): void {
+    localStorage.setItem('mockBoards', JSON.stringify(boards));
+  }
+
+  private static boards: Board[] = MockApiService.getBoardsFromStorage();
+  private static nextId = Math.max(...MockApiService.boards.map(b => parseInt(b.id))) + 1;
 
   // 게시글 목록 조회 (페이징 포함)
   static async getBoards(page: number = 1, limit: number = 5, sort: string = 'registerDate', order: string = 'desc') {
@@ -58,6 +67,7 @@ export class MockApiService {
     };
     this.nextId++;
     this.boards.unshift(newBoard);
+    this.saveBoardsToStorage(this.boards);
     return { data: newBoard };
   }
 
@@ -69,6 +79,7 @@ export class MockApiService {
     }
     
     this.boards[index] = { ...this.boards[index], ...boardData };
+    this.saveBoardsToStorage(this.boards);
     return { data: this.boards[index] };
   }
 
@@ -80,6 +91,7 @@ export class MockApiService {
     }
     
     this.boards.splice(index, 1);
+    this.saveBoardsToStorage(this.boards);
     return { data: { id } };
   }
 
