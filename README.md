@@ -20,7 +20,7 @@
     <ul>
       <li><span>목표: 중앙상태관리의 완벽한 필요성을 느끼게해준 게시판</span></li>
       <li><span>기술스택: react, scss, axios, firebaseHosting, json-server를 vercel에서 호스팅하여 API 엔드포인트 변경</li>
-      <li><span>배포링크: https://react-board-new.web.app/lists?_page=1#</span></li>
+      <li><span>배포링크: https://chapter06-develop.vercel.app/lists?_page=1</span></li>
       <li>
         <span>주요기능</span>
         <ol>
